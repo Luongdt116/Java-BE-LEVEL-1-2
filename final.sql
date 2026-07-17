@@ -56,25 +56,78 @@ from LineItem
 where order_id = 1;
 
 -- 4 Compute order total (quantity * price) from the line items for a given order id. You must use an User Define Function. 
-DELIMITER //
-CREATE FUNCTION ComputeOrderTotal(p_order_id INT) 
-RETURNS DECIMAL(10,2)
-DETERMINISTIC
-BEGIN
-    DECLARE v_total DECIMAL(10,2);
-    SELECT SUM(quantity * price) INTO v_total 
-    FROM LineItem 
-    WHERE order_id = p_order_id;
+delimiter //
+create function ComputerOrderTotal(p_order_id int)
+returns decimal(10,2)
+deterministic
+begin
+	declare v_total decimal(10,2);
+    select sum(quantity * price) into v_total
+    from lineitem
+    where order_id = p_order_id;
     
-    RETURN COALESCE(v_total, 0);
-END //
-DELIMITER ;
+    return coalesce(v_total, 0);
+end //
+delimiter ;
+
 
 -- 5 Add a customer into the database, you must use a Stored Procedure. 
+delimiter //
+create procedure AddCustomer(in p_customer_name varchar(255))
+begin
+	insert into customer(customer_name)
+    values (p_customer_name);
+end // 
+delimiter ;
 
+-- 6 Delete a customer from the database, make sure to also delete Orders and LineItem for the deleted customer. You must use a Stored Procedure. 
+delimiter //
+create procedure DeleteCustomer(in p_customer_id int)
+begin
+	delete lineitem from lineitem li
+    inner join  orders o on li.order_id = o.order_id
+    where o.customer_id = p_customer_id;
+    
+    delete from orders
+	where customer_id = p_customer_id;
+    
+    delete from customer
+    where customer_id = p_customer_id;
+end //
+delimiter ;
 
+-- 7 Update a customer in the database, you must use a Stored Procedure. 
+delimiter //
+create procedure UpdateCustomer(
+	in p_customer_id int,
+    in p_new_name varchar(255)
+)
+begin
+	update customer
+    set customer_name = p_new_name
+    where customer_id = p_customer_id;
+end //
+delimiter ;
 
+-- 8 Create an order into the database. 
+insert into Orders (order_date, customer_id, employee_id, total) 
+values (NOW(), 1, 1, 0.00);
 
+-- 9 Create a LineItem into the database. 
+insert into LineItem (order_id, product_id, quantity, price) 
+values (1, 1, 2, 150.50);
+
+-- 10 Update an order total into the database.
+DELIMITER //
+CREATE TRIGGER After_Insert_LineItem
+AFTER INSERT ON LineItem
+FOR EACH ROW
+BEGIN
+    UPDATE Orders 
+    SET total = ComputeOrderTotal(NEW.order_id) 
+    WHERE order_id = NEW.order_id;
+END //
+DELIMITER ;
 
 
 
