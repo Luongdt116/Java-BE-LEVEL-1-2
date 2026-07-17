@@ -118,16 +118,17 @@ insert into LineItem (order_id, product_id, quantity, price)
 values (1, 1, 2, 150.50);
 
 -- 10 Update an order total into the database.
-DELIMITER //
-CREATE TRIGGER After_Insert_LineItem
-AFTER INSERT ON LineItem
-FOR EACH ROW
-BEGIN
-    UPDATE Orders 
-    SET total = ComputeOrderTotal(NEW.order_id) 
-    WHERE order_id = NEW.order_id;
-END //
-DELIMITER ;
+delimiter //
+create trigger After_Isert_LineItem
+after insert on lineitem
+for each row
+begin
+	update orders
+    set total = ComputerOrderTotal(new.order_id)
+    where order_id = new.order_id;
+end //
+delimiter ;
+
 
 
 
