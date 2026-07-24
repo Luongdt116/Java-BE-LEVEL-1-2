@@ -29,25 +29,16 @@ void outputArray(int arr[], int n){
     printf("\n");
 }
 
-void outputDesc(int arr[], int n){
-    int tempArr[100];
-    for (int i = 0; i < n; i++) {
-        tempArr[i] = arr[i];
-    }
-    for(int i=0; i < n; i++){
-        for( int j = i + 1; j< n; j++ ){
-            if(tempArr[i] < tempArr[j]){
-                int temp = tempArr[i];
-                tempArr[i] = tempArr[j];
-                tempArr[j]= temp;
+void sortDesc(int arr[], int n) {
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = i + 1; j < n; j++) {
+            if (arr[i] < arr[j]) {
+                int temp = arr[i];
+                arr[i] = arr[j];
+                arr[j] = temp;
             }
         }
     }
-    printf("Mảng sắp xếp theo thứ tự giảm dần là: ");
-    for(int i = 0; i < n; i++){
-        printf("%d ", tempArr[i]);
-    }
-    printf("\n");
 }
 
 bool checkArrOdd(int arr[], int n){
@@ -64,19 +55,14 @@ bool checkArrOdd(int arr[], int n){
     }
 }
 
-int searchValue(int arr[], int n, int value){
+int countOccurrences(int arr[], int n, int value) {
     int count = 0;
     for (int i = 0; i < n; i++) {
         if (arr[i] == value) {
             count++;
         }
     }
-    
-    if (count > 0) {
-        printf("Giá trị %d xuất hiện %d lần trong mảng.\n", value, count);
-    } else {
-        printf("Giá trị %d không tồn tại trong mảng.\n", value);
-    }
+    return count;
 }
 
 void displayPrime(int arr[], int n){
@@ -155,7 +141,15 @@ int main(){
             outputArray(a,n);
             break;
         case 3:
-            outputDesc(a,n);
+            int tempArr[100];
+            for(int i = 0; i < n; i++) {
+                tempArr[i] = a[i];
+            }
+            
+            sortDesc(tempArr, n);
+            
+            printf("Mảng sắp xếp theo thứ tự giảm dần là:\n");
+            outputArray(tempArr, n);
             break;
         case 4:
             if(checkArrOdd(a,n)){
@@ -168,7 +162,14 @@ int main(){
             int x;
             printf("Nhập vào giá trị muốn tìm kiếm: ");
             scanf("%d", &x);
-            searchValue(a,n,x);
+            
+            int occurrences = countOccurrences(a, n, x);
+            
+            if (occurrences > 0) {
+                printf("Giá trị %d xuất hiện %d lần trong mảng.\n", x, occurrences);
+            } else {
+                printf("Giá trị %d không tồn tại trong mảng.\n", x);
+            }
             break;
         }
         case 6:
