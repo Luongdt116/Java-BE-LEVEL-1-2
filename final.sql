@@ -84,6 +84,13 @@ delimiter ;
 delimiter //
 create procedure DeleteCustomer(in p_customer_id int)
 begin
+	declare exit hander for sqlexception
+	begin
+		rollback;
+	end;
+
+	start transaction
+
 	delete lineitem from lineitem li
     inner join  orders o on li.order_id = o.order_id
     where o.customer_id = p_customer_id;
@@ -93,6 +100,8 @@ begin
     
     delete from customer
     where customer_id = p_customer_id;
+
+	commit 
 end //
 delimiter ;
 
