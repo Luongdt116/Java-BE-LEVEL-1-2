@@ -25,10 +25,18 @@ public class StudentManagement {
                     displayAll();
                     break;
                 case 3:
-                    findStudentById();
+                    System.out.println("\n--- Find Student By ID ---");
+                    System.out.print("Enter ID to search: ");
+                    String searchId = scanner.nextLine().trim();
+
+                    findIndexById(searchId);
                     break;
                 case 4:
-                    updateStudentById();
+                    System.out.println("\n--- Update Student Information ---");
+                    System.out.print("Enter ID of student to update: ");
+                    String updateId = scanner.nextLine().trim();
+
+                    updateStudentById(updateId);
                     break;
                 case 5:
                     System.out.println("Exiting program. Goodbye!");
@@ -51,6 +59,17 @@ public class StudentManagement {
         System.out.println("=================================");
     }
 
+    private static Student inputStudent(String id) {
+        String name = inputValidName();
+        int age = inputValidAge();
+        System.out.print("Enter Address: ");
+        String address = scanner.nextLine().trim();
+        String gender = inputValidGender();
+        System.out.print("Enter Email: ");
+        String email = scanner.nextLine().trim();
+
+        return new Student(id, name, age, address, gender, email);
+    }
     // 1. Create a student
     private static void createStudent() {
         if (count >= MAX_STUDENTS) {
@@ -58,9 +77,6 @@ public class StudentManagement {
             return;
         }
 
-        System.out.println("\n--- Create New Student ---");
-
-        // Validate ID (not duplicate & not empty)
         String id;
         while (true) {
             System.out.print("Enter ID: ");
@@ -73,26 +89,7 @@ public class StudentManagement {
                 break;
             }
         }
-
-        // Validate Name (not empty)
-        String name = inputValidName();
-
-        // Validate Age (>= 18)
-        int age = inputValidAge();
-
-        // Address
-        System.out.print("Enter Address: ");
-        String address = scanner.nextLine().trim();
-
-        // Validate Gender (male or female)
-        String gender = inputValidGender();
-
-        // Email
-        System.out.print("Enter Email: ");
-        String email = scanner.nextLine().trim();
-
-        // Add to array
-        listStudents[count] = new Student(id, name, age, address, gender, email);
+        listStudents[count] = inputStudent(id);
         count++;
         System.out.println("Student created successfully!\n");
     }
@@ -111,11 +108,7 @@ public class StudentManagement {
     }
 
     // 3. Find a student by id
-    private static void findStudentById() {
-        System.out.println("\n--- Find Student By ID ---");
-        System.out.print("Enter ID to search: ");
-        String id = scanner.nextLine().trim();
-
+    private static void findStudentById(String id) {
         int index = findIndexById(id);
         if (index != -1) {
             System.out.println("Student found:");
@@ -125,50 +118,31 @@ public class StudentManagement {
         }
     }
 
-    // 4. Update a student by id
-    private static void updateStudentById() {
-        System.out.println("\n--- Update Student Information ---");
-        System.out.print("Enter ID of student to update: ");
-        String id = scanner.nextLine().trim();
-
+    // find a student by id
+    public static int findIndexById(String id){
+        if(id == null){
+            return -1;
+        }
+        for (int i=0; i < count; i++){
+            if(listStudents[i] != null && listStudents[i].getId() != null && listStudents[i].getId().equalsIgnoreCase(id)){
+                return i;
+            }
+        }
+        return -1;
+    }
+    // . Update a student by id
+    private static void updateStudentById(String id) {
         int index = findIndexById(id);
         if (index == -1) {
             System.out.println("Student with ID '" + id + "' not found!\n");
             return;
         }
 
-        Student student = listStudents[index];
-        System.out.println("Updating student: " + student.getId());
-
-        // Update Name
-        student.setName(inputValidName());
-
-        // Update Age
-        student.setAge(inputValidAge());
-
-        // Update Address
-        System.out.print("Enter new Address: ");
-        student.setAddress(scanner.nextLine().trim());
-
-        // Update Gender
-        student.setGender(inputValidGender());
-
-        // Update Email
-        System.out.print("Enter new Email: ");
-        student.setEmail(scanner.nextLine().trim());
-
+        System.out.println("Updating student: " + id);
+        listStudents[index] = inputStudent(id);
         System.out.println("Student information updated successfully!\n");
     }
 
-    // Helper method to find index of student by ID
-    private static int findIndexById(String id) {
-        for (int i = 0; i < count; i++) {
-            if (listStudents[i].getId().equalsIgnoreCase(id)) {
-                return i;
-            }
-        }
-        return -1;
-    }
 
     // Input Validation Helpers
     private static String inputValidName() {
