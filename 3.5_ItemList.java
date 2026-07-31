@@ -51,7 +51,29 @@ public class ItemList {
         return false;
     }
 
-    public void didssplayItemsByType(String type){
-
+    public void displayItemsByType(String type){
+        if (type.equalsIgnoreCase("Vase")) {
+            for (int i = 0; i < numOfItem; i++) {
+                if (list[i] instanceof Vase) {
+                    System.out.println(list[i].toString());
+                }
+            }
+        } else if (type.equalsIgnoreCase("Statue")) {
+            for (int i = 0; i < numOfItem; i++) {
+                if (list[i] instanceof Statue) {
+                    System.out.println(list[i].toString());
+                }
+            }
+        } else if (type.equalsIgnoreCase("Painting")) {
+            for (int i = 0; i < numOfItem; i++) {
+                if (list[i] instanceof Painting) {
+                    System.out.println(list[i].toString());
+                }
+            }
+        } else {
+            System.out.println("Invalid type. Please enter Vase, Statue, or Painting.");
+        }
     }
+
+    //remove & report
 }
