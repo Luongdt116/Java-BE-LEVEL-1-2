@@ -92,18 +92,23 @@ public class TrainningManagement {
     }
 
     public Trainee findTraineeById(String id){
-        int idx =- indexOfId(id);
+        int idx = indexOfId(id);
         return idx == -1? null: listOfTrainees[idx];
     }
 
     public Trainee[] findTraineeByName(String name){
+        if(name == null || name.trim().isEmpty()){
+            return new Trainee[0];
+        }
         String key = name.toLowerCase();
         Trainee[] temp = new Trainee[count];
         int k = 0;
 
         for(int i = 0; i< count; i++){
-            if(listOfTrainees[i].getName().toLowerCase().contains(key)){
-                temp[k++]=listOfTrainees[i];
+            if(listOfTrainees[i] != null && listOfTrainees[i].getName() != null){
+                if(listOfTrainees[i].getName().toLowerCase().contains(key)){
+                    temp[k++]=listOfTrainees[i];
+                }
             }
         }
 
