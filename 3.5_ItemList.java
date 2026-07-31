@@ -1,5 +1,7 @@
 package Lab03;
 
+import java.util.List;
+
 public class ItemList {
     private Item list[];
     private int numOfItem;
@@ -31,40 +33,53 @@ public class ItemList {
     // find item by its creator - first
     public Item findItem(String creator){
         for(int i=0; i < numOfItem; i++){
-            if(list[i].getCreator().equalsIgnoreCase(creator)){
+            if(list[i] != null && list[i].getCreator() != null && list[i].getCreator().equalsIgnoreCase(creator)){
                 return list[i];
             }
         }
         return null;
     }
 
-    // updatee item by id
-    public boolean updateItem(String id){
-        for( int i=0; i< numOfItem; i++){
-            if(list[i].getId().equalsIgnoreCase(id)){
-                System.out.println("Item found! Please enter new information: ");
-                list[i].input();
-                return true;
+    public int findIndexByID(String Id){
+        if(Id == null || Id.isEmpty()){
+            return -1;
+        }
+        for(int i = 0; i < numOfItem; i++){
+            if(list[i] != null && list[i].getId() != null && list[i].getId().equalsIgnoreCase(Id)){
+                return i;
             }
         }
-        System.out.println("Item with ID '"+ id + "' not found.");
-        return false;
+        return -1;
     }
 
+    public Item getItemById(String id){
+       int index = findIndexByID(id);
+       if(index != -1){
+           return list[index];
+       }
+        return null;
+    }
+
+
     public void displayItemsByType(String type){
-        if (type.equalsIgnoreCase("Vase")) {
+        if(type == null || type.isEmpty()){
+            System.out.println("Type cannot be empty!.");
+            return;
+        }
+
+        if ("vase".equalsIgnoreCase(type)) {
             for (int i = 0; i < numOfItem; i++) {
                 if (list[i] instanceof Vase) {
                     System.out.println(list[i].toString());
                 }
             }
-        } else if (type.equalsIgnoreCase("Statue")) {
+        } else if ("statue".equalsIgnoreCase(type)) {
             for (int i = 0; i < numOfItem; i++) {
                 if (list[i] instanceof Statue) {
                     System.out.println(list[i].toString());
                 }
             }
-        } else if (type.equalsIgnoreCase("Painting")) {
+        } else if ("painting".equalsIgnoreCase(type)) {
             for (int i = 0; i < numOfItem; i++) {
                 if (list[i] instanceof Painting) {
                     System.out.println(list[i].toString());
@@ -73,7 +88,21 @@ public class ItemList {
         } else {
             System.out.println("Invalid type. Please enter Vase, Statue, or Painting.");
         }
+
     }
 
-    //remove & report
+    //remove
+    public boolean deleteItem(String id){
+        int index = findIndexByID(id);
+
+        if(index == -1){
+            return false;
+        }
+        for(int j = index; j < numOfItem - 1; j++){
+            list[j] = list[j+1];
+        }
+        numOfItem --;
+        list[numOfItem] = null;
+        return true;
+    }
 }
