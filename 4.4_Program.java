@@ -32,10 +32,10 @@ public class Program {
                     System.out.println("Enter Id: ");
                     int id = Integer.parseInt(scanner.nextLine().trim());
 
-                    System.out.println("Enter Id: ");
+                    System.out.println("Enter Name: ");
                     String name = scanner.nextLine().trim();
 
-                    System.out.println("Enter Id: ");
+                    System.out.println("Enter Price: ");
                     float price = Float.parseFloat(scanner.nextLine().trim());
 
                     if(type.equals("1")){
