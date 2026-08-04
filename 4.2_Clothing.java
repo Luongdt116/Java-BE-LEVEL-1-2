@@ -18,7 +18,7 @@ public class Clothing extends Product{
 
     @Override
     public String toString() {
-        return String.format("Clothing [ID: %-5s | name: %-6s | price: %-6d | size: % -3s ]",
+        return String.format("Clothing [ID: %-5s | name: %-6s | price: %-6.2f | size: % -3s ]",
                 id, name, price, size);
     }
 }
