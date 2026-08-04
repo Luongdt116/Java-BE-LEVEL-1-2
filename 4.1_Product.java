@@ -37,7 +37,7 @@ public abstract class Product {
 
     @Override
     public String toString() {
-        return String.format("Product [ID: %-5s | name: %-6s | price: %-6d ]",
+        return String.format("Product [ID: %-5s | name: %-6s | price: %-6.2f ]",
                 id, name, price);
     }
 }
