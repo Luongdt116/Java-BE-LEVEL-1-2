@@ -32,10 +32,10 @@ public class Program {
                     System.out.println("Enter Id: ");
                     int id = Integer.parseInt(scanner.nextLine().trim());
 
-                    System.out.println("Enter Name: ");
+                    System.out.println("Enter Id: ");
                     String name = scanner.nextLine().trim();
 
-                    System.out.println("Enter Price: ");
+                    System.out.println("Enter Id: ");
                     float price = Float.parseFloat(scanner.nextLine().trim());
 
                     if(type.equals("1")){
@@ -88,7 +88,7 @@ public class Program {
     }
 
     public void addProduct(Product product){
-        if(product == null || numOfProduct > MAX){
+        if(product == null || numOfProduct >= MAX){
             System.out.println("Restore full");
             return;
         }
@@ -104,7 +104,9 @@ public class Program {
         }
         System.out.println("Product list: ");
         for (int i = 0; i < numOfProduct; i++){
-            System.out.println(products[i].toString());
+            if(products[i]!=null){
+                System.out.println(products[i].toString());
+            }
         }
     }
 
@@ -116,6 +118,4 @@ public class Program {
         }
         return null;
     }
-
-
 }
