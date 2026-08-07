@@ -1,5 +1,7 @@
 package Lab04;
 
+import javax.swing.text.html.Option;
+import java.util.Optional;
 import java.util.Scanner;
 
 public class Program {
@@ -65,9 +67,11 @@ public class Program {
                     System.out.println("Enter product id to find: ");
                     try{
                         int searchId = Integer.parseInt(scanner.nextLine().trim());
-                        Product foundProduct = p.findProduct(searchId);
 
-                        if(foundProduct != null){
+                        // gán foundProduct chứa kết quả sau timf kiếm
+                        Optional<Product> foundProduct = p.findProduct(searchId);
+
+                        if(foundProduct.isPresent()){
                             System.out.println("Product found: "+ foundProduct.toString());
                         }else {
                             System.out.println("Proudct with id ' "+ searchId + " ' not found ");
@@ -110,12 +114,17 @@ public class Program {
         }
     }
 
-    public Product findProduct( int id ){
+    // để kiểu trả về là Optional<Product>
+    public Optional<Product> findProduct(int id ){
         for(int i=0; i < numOfProduct; i++){
             if(products[i] != null && products[i].getId() == id){
-                return products[i];
+                // nếu tìm thấy thì đưa vào optional
+                return Optional.of(products[i]);
             }
         }
-        return null;
+        //khooongg thấy thì trả về một optional rỗng
+        return Optional.empty();
     }
+
+
 }
