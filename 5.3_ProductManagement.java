@@ -11,8 +11,8 @@ public class ProductManagement {
         }
 
         if(product == null) throw new IllegalArgumentException("Product cannot be null");
-
-        if(product == null) throw new IllegalArgumentException("Price and quantity must be non-negative");
+        
+        if(product.getPrice() <= 0 || product.getQuantityInStock() <= 0) throw new IllegalArgumentException("Price and quantity must be non-negative");
 
         for (int i = 0; i < productCount; i++) {
             if (products[i] != null && products[i].getProductID() == product.getProductID()) {
