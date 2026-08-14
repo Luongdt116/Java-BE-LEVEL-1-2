@@ -2,174 +2,134 @@ package Lab06.training.main;
 
 import Lab06.training.entities.Course;
 import java.util.stream.Collectors;
-import org.w3c.dom.ls.LSException;
+
+import Lab06.training.utils.Constants;
+import Lab06.training.utils.ScannerUtil;
+import Lab06.training.utils.Validator;
 
 import java.util.*;
 
 public class CourseManagement {
-    private static final Scanner SCANER = new Scanner(System.in);
-    private static final ArrayList<Course> courses = new ArrayList<>();
-    private static final HashSet<String> codeSet = new HashSet<>();
-    private static final HashMap<String, Course> courseMap = new HashMap<>();
+    private final ArrayList<Course> courses = new ArrayList<>();
 
     public static void main(String[] args) {
-        int choice = -1;
-
-        do {
-            System.out.println("\n====== COURSE MANAGEMENT ======");
-            System.out.println("1. Create a course");
-            System.out.println("2. Search courses by attribute");
-            System.out.println("3. Display courses by flag");
-            System.out.println("0. Quit");
-            System.out.println("Enter your choice: ");
-
-            try{
-                choice = Integer.parseInt(SCANER.nextLine().trim());
-            }catch (NumberFormatException e){
-                choice = -1;
-            }
-
+        new CourseManagement().run();
+    }
+    private void run(){
+        while(true){
+            showMenu();
+            int choice = ScannerUtil.readMenuChoice();
             switch (choice){
-                case 1 -> {
-                    System.out.println("------- Add new course ---------");
-                    try {
-                        System.out.print("Enter course code (RAxxx): ");
-                        String code = SCANER.nextLine().trim().toUpperCase();
-                        if (!code.matches("^RA\\d{3}$")) {
-                            throw new IllegalArgumentException("Pattern must be RAxxx.");
-                        }
-                        if (codeSet.contains(code)) {
-                            throw new IllegalArgumentException("Code already exists.");
-                        }
-
-                        System.out.print("Enter name: ");
-                        String name = SCANER.nextLine().trim();
-                        if (name.isEmpty()) {
-                            throw new IllegalArgumentException("Name cannot be empty.");
-                        }
-
-                        System.out.print("Enter status (true/false): ");
-                        String statusStr = SCANER.nextLine().trim().toLowerCase();
-                        if (!statusStr.equals("true") && !statusStr.equals("false")) {
-                            throw new IllegalArgumentException("Status must be true or false.");
-                        }
-                        boolean status = Boolean.parseBoolean(statusStr);
-
-                        System.out.print("Enter duration (>0): ");
-                        short duration = Short.parseShort(SCANER.nextLine().trim());
-                        if (duration <= 0) {
-                            throw new IllegalArgumentException("Duration must be greater than 0.");
-                        }
-
-                        System.out.print("Enter flag (optional/prerequisite/N/A): ");
-                        String flag = SCANER.nextLine().trim();
-                        if (!flag.equalsIgnoreCase("optional") &&
-                                !flag.equalsIgnoreCase("prerequisite") &&
-                                !flag.equalsIgnoreCase("N/A") && !flag.equalsIgnoreCase("n/a")) {
-                            throw new IllegalArgumentException("Invalid flag.");
-                        }
-
-                        // Chuẩn hóa flag
-                        flag = flag.equalsIgnoreCase("n/a") ? "N/A" : flag.toLowerCase();
-
-                        // Khởi tạo và thêm vào cả 3 cấu trúc dữ liệu
-                        Course newCourse = new Course(code, name, status, duration, flag);
-                        courses.add(newCourse);
-                        codeSet.add(code);
-                        courseMap.put(code, newCourse);
-
-                        System.out.println("Course created successfully!");
-
-                    } catch (NumberFormatException e) {
-                        System.out.println("Error: Duration must be a valid number.");
-                    } catch (IllegalArgumentException e) {
-                        System.out.println("Error: " + e.getMessage());
-                    }
+                case Constants.MENU_CREATE -> createCourse();
+                case Constants.MENU_SEARCH -> searchCourses();
+                case Constants.MENU_DISPLAY_BY_FLAG -> displayByFlag();
+                case Constants.MENU_QUIT -> {
+                    System.out.println("Bye!");
                 }
-
-                case 2 -> {
-                    System.out.println("------- Search courses ---------");
-                    try {
-                        System.out.print("Search by (code/name/status/duration/flag): ");
-                        String type = SCANER.nextLine().trim().toLowerCase();
-
-                        System.out.print("Enter value to search: ");
-                        String data = SCANER.nextLine().trim();
-
-                        // Biến result lưu kết quả tìm kiếm
-                        List<Course> result = switch (type) {
-                            case "code" -> {
-                                Course found = courseMap.get(data.toUpperCase());
-                                yield found != null ? List.of(found) : new ArrayList<>();
-                            }
-                            case "name" -> courses.stream()
-                                    .filter(c -> c.getName().toLowerCase().contains(data.toLowerCase()))
-                                    .sorted(Comparator.comparing(Course::getName))
-                                    .collect(Collectors.toList());
-                            case "status" -> {
-                                boolean wanted = data.equalsIgnoreCase("true") || data.equalsIgnoreCase("active");
-                                yield courses.stream()
-                                        .filter(c -> c.isStatus() == wanted)
-                                        .collect(Collectors.toList());
-                            }
-                            case "duration" -> {
-                                short dd = Short.parseShort(data);
-                                yield courses.stream()
-                                        .filter(c -> c.getDuration() == dd)
-                                        .collect(Collectors.toList());
-                            }
-                            case "flag" -> {
-                                Map<String, List<Course>> mapByFlag = courses.stream()
-                                        .collect(Collectors.groupingBy(c -> c.getFlag().toLowerCase()));
-                                yield mapByFlag.getOrDefault(data.toLowerCase(), new ArrayList<>());
-                            }
-                            default -> throw new IllegalArgumentException("Unsupported attribute.");
-                        };
-
-                        // In kết quả
-                        if (result.isEmpty()) {
-                            System.out.println("No data.");
-                        } else {
-                            System.out.printf("%-6s | %-20s | %-6s | %-8s | %-12s%n", "CODE", "NAME", "STATUS", "DURATION", "FLAG");
-                            for (Course c : result) {
-                                System.out.println(c.toString());
-                            }
-                        }
-
-                    } catch (NumberFormatException e) {
-                        System.out.println("Error: Value must be a valid number for duration.");
-                    } catch (IllegalArgumentException e) {
-                        System.out.println("Error: " + e.getMessage());
-                    }
-                }
-                case 3 -> {
-                    System.out.println("------- Display courses by flag ---------");
-                    System.out.print("Enter flag to display (optional/prerequisite/N/A): ");
-                    String flag = SCANER.nextLine().trim();
-
-                    List<Course> result = courses.stream()
-                            .filter(c -> c.getFlag().equalsIgnoreCase(flag))
-                            .collect(Collectors.toList());
-
-                    if (result.isEmpty()) {
-                        System.out.println("No data.");
-                    } else {
-                        System.out.printf("%-6s | %-20s | %-6s | %-8s | %-12s%n", "CODE", "NAME", "STATUS", "DURATION", "FLAG");
-                        for (Course c : result) {
-                            System.out.println(c.toString());
-                        }
-                    }
-                }
-
-                case 0 -> {
-                    System.out.println("Exiting the program. Goodbye!");
-                }
-
-                default -> {
-                    System.out.println("Invalid choice. Please select 0-3.");
-                }
+                default -> System.out.println("Invalid choice.");
             }
+        }
+    }
 
-        } while (choice != 0);
+    private void showMenu(){
+        System.out.println("\n========= COURSE MANAGEMENT ========");
+        System.out.println("1. Create a course");
+        System.out.println("2. Search courses by attribute");
+        System.out.println("3. Display courese by flag");
+        System.out.println("0. Quit");
+    }
+
+    private void createCourse(){
+        String code = readValidCode();
+        String name = ScannerUtil.readNonempty("Enter name: ");
+        boolean status = ScannerUtil.readBoolean("Enter status ");
+        short duration = ScannerUtil.readPositiveShort("Enter duration (>0): ");
+        String flag = readValidFlag();
+
+        courses.add(new Course(code, name, status, duration, flag));
+        System.out.println("Course created!");
+    }
+
+    private String readValidCode(){
+        while (true){
+            String code = ScannerUtil.readNonempty("Enter course code (RAxxx): ");
+
+            if(!Validator.validateCode((code))){
+                System.out.println("Pattern must be RAxxx");
+                continue;
+            }
+            if(Validator.isDuplicatedCode(code,courses)){
+                System.out.println("Code already exists.");
+                continue;
+            }
+            return code;
+        }
+    }
+    private String readValidFlag(){
+        while (true){
+            String flag = ScannerUtil.readNonempty("Enter flag (optional/prerequisite/N/A): ");
+
+            if(Validator.validateFlag(flag))  return flag.equalsIgnoreCase("n/a") ? "N/A" : flag.toLowerCase(Locale.ROOT);
+            System.out.println("Invalid flag.");
+        }
+    }
+
+    private void searchCourses(){
+        String type = ScannerUtil.readNonempty("Search by (codee/name/status/duration/flag): ").toLowerCase(Locale.ROOT);
+        String data = ScannerUtil.readNonempty("Enter value to search: ");
+        var result = switch (type){
+            case "code" -> courses.stream().filter(c-> c.getCode().equalsIgnoreCase(data)).collect(Collectors.toList());
+            case "name" -> courses.stream().filter(c -> c.getName().
+                    toLowerCase(Locale.ROOT).contains(data.toLowerCase(Locale.ROOT))).
+                    sorted(Comparator.comparing(Course::getName)).
+                    collect(Collectors.toList());
+            case "status" -> {
+                boolean wanted = "true".equalsIgnoreCase(data) || "active".equalsIgnoreCase(data);
+                yield courses.stream().filter(c-> c.isStatus() == wanted).collect(Collectors.toList());
+            }
+            case "duration" ->{
+                short d;
+                try{
+                    d = Short.parseShort(data);
+                }catch (NumberFormatException e){
+                    d = -1;
+                }
+
+                short dd = d;
+                yield courses.stream().filter(c -> c.getDuration() == dd).collect(Collectors.toList());
+            }
+            case "flag" -> courses.stream().filter(c->c.getFlag().equalsIgnoreCase(data)).collect(Collectors.toList());
+            default -> {
+                System.out.println("Unsupported attribute.");
+                yield new ArrayList<Course>();
+            }
+        };
+        printCourses(result);
+    }
+
+    private void displayByFlag(){
+        String flag = readValidFlag();
+        var result = courses.stream().filter(c->c.getFlag().equalsIgnoreCase(flag)).collect(Collectors.toList());
+        printCourses(result);
+    }
+
+    private void printCourses(java.util.List<Course> list){
+        if(list.isEmpty()){
+            System.out.println("No data.");
+            return;
+        }
+        System.out.println(Constants.TABLE_HEADER);
+        list.forEach(c-> System.out.println(c.toString()));
     }
 }
+
+
+
+
+
+
+
+
+
+
+
