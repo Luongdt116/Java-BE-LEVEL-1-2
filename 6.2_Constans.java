@@ -15,6 +15,6 @@ public class Constants {
     public static final int MENU_DISPLAY_BY_FLAG = 3;
     public static final int MENU_QUIT = 0;
 
-    public static final String TABLE_HEADER = String.format("%-6 | %-20s | %-6s | %-8s | %-12s",
+    public static final String TABLE_HEADER = String.format("%-6s | %-20s | %-6s | %-8s | %-12s",
             "CODE", "NAME", "STATUS", "DURATION", "FLAG");
 }
