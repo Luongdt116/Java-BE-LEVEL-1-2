@@ -1,7 +1,9 @@
 package Lab06.training.utils;
 
+import Lab06.training.entities.Course;
+
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 
 public final class Validator {
     private Validator(){}
@@ -10,8 +12,8 @@ public final class Validator {
         return code != null && code.matches(Constants.COURSE_CODE_REGEX);
     }
 
-    public static boolean isDuplicatedCode(String code, HashSet<String> codeSet){
-        return codeSet.contains(code.toUpperCase());
+    public static boolean isDuplicatedCode(String code, ArrayList<Course> courses){
+        return courses.stream().anyMatch(c->c.getCode().equalsIgnoreCase(code));
     }
 
     public static boolean validateFlag(String flag){
