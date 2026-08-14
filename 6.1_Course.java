@@ -63,7 +63,7 @@ public class Course {
 
     @Override
     public String toString() {
-        return  String.format("Course [Code: %-5s | name: %-6s | status: %-6b | duration: %-5d | flag: %-5s]",
+        return  String.format("Course [Code: %-20s | name: %-6s | status: %-6b | duration: %-5d | flag: %-5s]",
                 code, name, status ? "active":"in-active", duration, flag);
     }
 
