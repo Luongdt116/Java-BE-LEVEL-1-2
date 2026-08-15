@@ -9,7 +9,6 @@ public class Course {
     private boolean status;
     private short duration;
     private String flag;
-    public Scanner sc = new Scanner(System.in);
 
     public Course(){}
 
