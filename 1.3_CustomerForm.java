@@ -1,11 +1,11 @@
 package sales.client;
-
+import sales.InputUtil;
 import sales.entities.Customer;
-
-import javax.sound.midi.Soundbank;
 import java.util.Scanner;
 
 public class CustomerForm {
+    public static final int MAX_NAME_LENGTH = 50;
+
     private final Scanner sc;
 
     public CustomerForm(Scanner sc){
@@ -24,23 +24,12 @@ public class CustomerForm {
     public Customer getCustomer(){
         Customer customer = new Customer();
 
-        System.out.println("Enter customer name: ");
-        customer.setName(sc.nextLine().trim());
-
-        System.out.println("Enter contact name: ");
-        customer.setContact(sc.nextLine().trim());
-
-        System.out.println("Enter address: ");
-        customer.setAddress(sc.nextLine().trim());
-
-        System.out.println("Enter city: ");
-        customer.setCity(sc.nextLine().trim());
-
-        System.out.println("Enter post code: ");
-        customer.setPostCode(sc.nextLine().trim());
-
-        System.out.print("Enter country: ");
-        customer.setCountry(sc.nextLine().trim());
+        customer.setName(InputUtil.readStringWithLimit("Enter customer name: ", 255));
+        customer.setContact(InputUtil.readStringWithLimit("Enter contact name: ", 255));
+        customer.setAddress(InputUtil.readStringWithLimit("Enter address: ", 255));
+        customer.setCity(InputUtil.readStringWithLimit("Enter city: ", 255));
+        customer.setPostCode(InputUtil.readStringWithLimit("Enter post code: ", 10));
+        customer.setCountry(InputUtil.readStringWithLimit("Enter country: ", 50));
 
         return customer;
     }
