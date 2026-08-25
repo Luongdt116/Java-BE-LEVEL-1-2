@@ -87,7 +87,7 @@ public class CustomerDAO {
                 return true;
             }
         }catch (SQLException e){
-            throw new SQLException("Can not insert customer" + e.getMessage());
+            throw new SQLException("Can not update customer" + e.getMessage());
         }
 
         return false;
@@ -108,7 +108,7 @@ public class CustomerDAO {
                 return true;
             }
         }catch (SQLException e){
-            throw new SQLException("Can not insert customer" + e.getMessage());
+            throw new SQLException("Can not delete customer" + e.getMessage());
         }
         return false;
     }
