@@ -1,5 +1,6 @@
 package sales.client;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import sales.dao.CustomerDAO;
 import sales.dao.EmployeeDAO;
 import sales.entities.Customer;
@@ -112,13 +113,24 @@ public class SalesManagement {
     }
 
     private static Connection getConnection() throws SQLException{
-        try{
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            String url = "jdbc:mysql://localhost:3306/sales";
-            return DriverManager.getConnection(url,"root","cscorner");
+        try {
+            // Tải toàn bộ dữ liệu từ file .env
+            Dotenv dotenv = Dotenv.load();
 
-        }catch (ClassNotFoundException e){
-            throw new SQLException("Can not open connection" + e.getMessage());
+            // Lấy giá trị thông qua các Key đã đặt
+            String url = dotenv.get("DB_URL");
+            String user = dotenv.get("DB_USER");
+            String password = dotenv.get("DB_PASSWORD");
+
+            Class.forName("com.mysql.cj.jdbc.Driver");
+
+            // Truyền các biến vừa lấy được vào hàm kết nối
+            return DriverManager.getConnection(url, user, password);
+
+        } catch (ClassNotFoundException e) {
+            throw new SQLException("Can not open connection: " + e.getMessage());
+        } catch (Exception e) {
+            throw new SQLException("Lỗi khi đọc file .env: " + e.getMessage());
         }
     }
 
