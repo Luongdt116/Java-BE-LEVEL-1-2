@@ -90,6 +90,20 @@ public class EmployeeDAO {
         if(conn == null){
             return false;
         }
+
+        // 1. Kiểm tra xem nhân viên này có đang quản lý ai không
+        String checkQuery = "SELECT COUNT(*) FROM employees WHERE supervisor_id = ?";
+        try (PreparedStatement checkPs = conn.prepareStatement(checkQuery)) {
+            checkPs.setInt(1, id);
+            try (ResultSet rs = checkPs.executeQuery()) {
+                // Nếu tìm thấy nhân viên cấp dưới (count > 0)
+                if (rs.next() && rs.getInt(1) > 0) {
+                    // Ném ra ngoại lệ với thông báo lỗi rõ ràng cho người dùng
+                    throw new SQLException("Không thể xóa! Nhân viên này đang là quản lý của " + rs.getInt(1) + " nhân viên khác.");
+                }
+            }
+        }
+
         String delete = "delete from employees where employee_id = ?";
 
         int index = 1;
